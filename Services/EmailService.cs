@@ -22,18 +22,11 @@ namespace WebApi.Services
 
         public void Send(string to, string subject, string html, string from = null)
         {
-            // create message
-            var email = new MimeMessage();
-            // email.Sender = MailboxAddress.Parse(from ?? _appSettings.EmailFrom);
-            // email.From.Add(email.Sender);
-            // email.To.Add(MailboxAddress.Parse(to));
-            // email.Subject = subject;
-            // email.Body = new TextPart(TextFormat.Html) { Text = html };
-            // email.Cc.Add(MailboxAddress.Parse("noreply@mantysalo.net"));
-
             var smtpSettingsJson = Environment.GetEnvironmentVariable("TIMER_SMTP_JSON");
             var smtpSettings = JsonSerializer.Deserialize<SmtpSettings>(smtpSettingsJson);
 
+            // create message
+            var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(smtpSettings.sender);
             email.From.Add(new MailboxAddress(smtpSettings.from, smtpSettings.sender));
             email.To.Add(MailboxAddress.Parse(to));

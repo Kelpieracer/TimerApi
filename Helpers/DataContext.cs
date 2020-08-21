@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using WebApi.Entities;
@@ -17,8 +18,18 @@ namespace WebApi.Helpers
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
+            var dbConnectionString = Configuration.GetConnectionString("WebApiDatabase");
+            var dbEnvironmentVariableName = Environment.GetEnvironmentVariable("ConnectionStrings__WebApiDatabase");
+
             // connect to sqlite database
-            options.UseSqlite(Configuration.GetConnectionString("WebApiDatabase"));
+            if (dbEnvironmentVariableName == null)
+            {
+                options.UseSqlite(dbConnectionString);
+                return;
+            }
+
+            // connect to sql server
+            options.UseSqlServer(dbConnectionString);
         }
     }
 }

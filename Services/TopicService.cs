@@ -18,7 +18,7 @@ namespace WebApi.Services
 {
     public interface ITopicService
     {
-        public IActionResult CreateTopic(CreateTopicRequest model, Account account);
+        public IActionResult Create(CreateTopicRequest model, Account account);
     }
 
     public class TopicService : ITopicService
@@ -40,7 +40,7 @@ namespace WebApi.Services
             _emailService = emailService;
         }
 
-        public IActionResult CreateTopic(CreateTopicRequest model, Account account)
+        public IActionResult Create(CreateTopicRequest model, Account account)
         {
             if (account == null)
                 return new UnauthorizedResult();

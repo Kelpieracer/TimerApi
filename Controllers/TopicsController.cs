@@ -22,10 +22,10 @@ namespace WebApi.Controllers
         }
 
         // [Authorize]
-        [HttpPost("create-topic")]
-        public IActionResult CreateTopic(CreateTopicRequest model)
+        [HttpPost("create")]
+        public IActionResult Create(CreateTopicRequest model)
         {
-            return _topicService.CreateTopic(model, Account);
+            return _topicService.Create(model, Account);
         }
     }
 }

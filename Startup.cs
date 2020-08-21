@@ -48,6 +48,7 @@ namespace WebApi
             app.UseSwagger();
             app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.json", "ASP.NET Core Sign-up and Verification API"));
 
+
             app.UseRouting();
 
             // global cors policy
@@ -64,6 +65,9 @@ namespace WebApi
             app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(x => x.MapControllers());
+
+            // Enforce https
+            app.UseHttpsRedirection();
         }
     }
 }

@@ -7,10 +7,15 @@ namespace WebApi.Helpers
 {
     public class DataContext : DbContext
     {
+        public virtual DbSet<Bill> Bills { get; set; }
+        public virtual DbSet<Customer> Customers { get; set; }
+        public virtual DbSet<Project> Projects { get; set; }
+        public virtual DbSet<Rate> Rates { get; set; }
+        public virtual DbSet<Topic> Topics { get; set; }
+        public virtual DbSet<WorkItem> WorkItems { get; set; }
+
         public DbSet<Account> Accounts { get; set; }
-
         private readonly IConfiguration Configuration;
-
         public DataContext(IConfiguration configuration)
         {
             Configuration = configuration;

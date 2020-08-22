@@ -8,8 +8,8 @@ namespace WebApi.Services
 {
     public interface IProjectService
     {
-        public ServiceReply Create(CreateProjectRequest model, Account account);
-        public ServiceReply Delete(int id, Account account);
+        public ProjectResponse Create(CreateProjectRequest model, Account account);
+        public void Delete(int id, Account account);
     }
 
     public class ProjectService : IProjectService
@@ -33,35 +33,35 @@ namespace WebApi.Services
             // _emailService = emailService;
         }
 
-        public ServiceReply Create(CreateProjectRequest model, Account account)
+        public ProjectResponse Create(CreateProjectRequest model, Account account)
         {
             if (account == null)
-                return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized access." };
+                ErrorMessages.Throw(ErrorMessages.Code.UnAuthorized);
 
             var Project = new Project { Name = model.Name, Manager = account };
             if (_context.Projects.Any(t => t.Name == Project.Name && t.Manager.Id == Project.Manager.Id))
-                return new ServiceReply { ServiceResult = ServiceResult.Conflict, item = "Item already exists." };
+                ErrorMessages.Throw(ErrorMessages.Code.Conflict);
 
             _context.Projects.Add(Project);
             _context.SaveChanges();
-            return new ServiceReply { ServiceResult = ServiceResult.Created, item = new CreateProjectRequest { Name = Project.Name, ProjectId = Project.ProjectId } };
+            return _mapper.Map<ProjectResponse>(Project);
         }
 
-        public ServiceReply Delete(int id, Account account)
+        public void Delete(int id, Account account)
         {
             if (account == null)
-                return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized access." };
+                ErrorMessages.Throw(ErrorMessages.Code.UnAuthorized);
 
             var Project = _context.Projects.FirstOrDefault(t => t.ProjectId == id);
             if (Project == null)
-                return new ServiceReply { ServiceResult = ServiceResult.NotFound, item = "Item not found." };
+                ErrorMessages.Throw(ErrorMessages.Code.NotFound);
 
             if (Project.Manager.Id != account.Id)
-                return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized to delete this item." };
+                ErrorMessages.Throw(ErrorMessages.Code.UnAuthorized);
 
             _context.Projects.Remove(Project);
             _context.SaveChanges();
-            return new ServiceReply { ServiceResult = ServiceResult.NoContent, item = Project };
+            return;
         }
     }
 }

@@ -3,14 +3,13 @@ using System.Linq;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Models.Topics;
-using System;
 
 namespace WebApi.Services
 {
     public interface ITopicService
     {
-        public ServiceReply Create(CreateTopicRequest model, Account account);
-        public ServiceReply Delete(int id, Account account);
+        public TopicResponse Create(CreateTopicRequest model, Account account);
+        public void Delete(int id, Account account);
     }
 
     public class TopicService : ITopicService
@@ -22,47 +21,43 @@ namespace WebApi.Services
 
 
         public TopicService(
-            DataContext context
-            // IMapper mapper,
-            // IOptions<AppSettings> appSettings,
-            // IEmailService emailService
+            DataContext context,
+             IMapper mapper
             )
         {
             _context = context;
-            // _mapper = mapper;
-            // _appSettings = appSettings.Value;
-            // _emailService = emailService;
+            _mapper = mapper;
         }
 
-        public ServiceReply Create(CreateTopicRequest model, Account account)
+        public TopicResponse Create(CreateTopicRequest model, Account account)
         {
             if (account == null)
-                return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized access." };
+                ErrorMessages.Throw(ErrorMessages.Code.UnAuthorized);
 
             var topic = new Topic { Name = model.Name, AccountId = account.Id };
             if (_context.Topics.Any(t => t.Name == topic.Name && t.AccountId == topic.AccountId))
-                return new ServiceReply { ServiceResult = ServiceResult.Conflict, item = "Item already exists." };
+                ErrorMessages.Throw(ErrorMessages.Code.Conflict);
 
             _context.Topics.Add(topic);
             _context.SaveChanges();
-            return new ServiceReply { ServiceResult = ServiceResult.Created, item = new CreateTopicRequest { Name = topic.Name, Id = topic.TopicId } };
+            return _mapper.Map<TopicResponse>(topic);
         }
 
-        public ServiceReply Delete(int id, Account account)
+        public void Delete(int id, Account account)
         {
             if (account == null)
-                return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized access." };
+                ErrorMessages.Throw(ErrorMessages.Code.UnAuthorized);
 
             var topic = _context.Topics.FirstOrDefault(t => t.TopicId == id);
             if (topic == null)
-                return new ServiceReply { ServiceResult = ServiceResult.NotFound, item = "Item not found." };
+                ErrorMessages.Throw(ErrorMessages.Code.NotFound);
 
             if (topic.AccountId != account.Id)
-                return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized to delete this item." };
+                ErrorMessages.Throw(ErrorMessages.Code.UnAuthorized);
 
             _context.Topics.Remove(topic);
             _context.SaveChanges();
-            return new ServiceReply { ServiceResult = ServiceResult.NoContent, item = topic };
+            return;
         }
     }
 }

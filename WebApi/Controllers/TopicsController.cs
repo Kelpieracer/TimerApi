@@ -12,7 +12,6 @@ namespace WebApi.Controllers
     {
         private readonly ITopicService _topicService;
         private readonly IMapper _mapper;
-        private readonly ControllerReply reply = new ControllerReply();
         public TopicsController(ITopicService topicService, IMapper mapper)
         {
             _topicService = topicService;
@@ -23,14 +22,15 @@ namespace WebApi.Controllers
         [HttpPost("create")]
         public IActionResult Create(CreateTopicRequest model)
         {
-            return reply.Get(_topicService.Create(model, Account));
+            return Ok(_topicService.Create(model, Account));
         }
 
         [Authorize]
         [HttpDelete("delete")]
         public IActionResult Delete(DeleteTopicRequest model)
         {
-            return reply.Get(_topicService.Delete(model.Id, Account));
+            _topicService.Delete(model.Id, Account);
+            return Ok(new { message = "Topic deleted successfully" });
         }
     }
 }

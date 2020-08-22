@@ -13,7 +13,6 @@ namespace WebApi.Controllers
     {
         private readonly IProjectService _ProjectService;
         private readonly IMapper _mapper;
-        private readonly ControllerReply reply = new ControllerReply();
         public ProjectsController(IProjectService ProjectService, IMapper mapper)
         {
             _ProjectService = ProjectService;
@@ -24,7 +23,7 @@ namespace WebApi.Controllers
         [HttpPost("create")]
         public IActionResult Create(CreateProjectRequest model)
         {
-            return reply.Get(_ProjectService.Create(model, Account));
+            return Ok(_ProjectService.Create(model, Account));
         }
 
         /*

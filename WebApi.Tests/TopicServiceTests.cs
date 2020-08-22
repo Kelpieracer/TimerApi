@@ -1,5 +1,6 @@
 ﻿// Unit testing controllers -- https://docs.microsoft.com/fi-fi/ef/ef6/fundamentals/testing/mocking?redirectedfrom=MSDN
 
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
@@ -16,30 +17,48 @@ namespace UnitTests
     public class TopicServiceTests
     {
         readonly List<List<Topic>> _data = new List<List<Topic>> {
-            new List<Topic> { new Topic { Name = "BBB", AccountId = 1}, },
-            new List<Topic> { new Topic { Name = "BBB", AccountId = 1}, new Topic { Name = "Conflict case", AccountId = 1 }, },
+            new List<Topic> { new Topic { Name = "BBB", AccountId = 1, TopicId = 24}, },
+            new List<Topic> { new Topic { Name = "BBB", AccountId = 1, TopicId = 24}, new Topic { Name = "Conflict case", AccountId = 1, TopicId = 25 }, },
         };
 
         [Theory]
-        [InlineData(ServiceResult.Created, 0, "Success case", 0, true)]
-        [InlineData(ServiceResult.Conflict, 0, "Conflict case", 1, true)]
-        [InlineData(ServiceResult.UnAuthorized, 0, "Unauthorized case", 0, false)]
-        public void CreateTest(ServiceResult result, int accountId, string newTopicName, int dataCase, bool authorized)
+        [InlineData(ErrorMessages.Code.Ok, 0, "Success case", 0, true)]
+        [InlineData(ErrorMessages.Code.Conflict, 1, "Conflict case", 1, true)]
+        [InlineData(ErrorMessages.Code.UnAuthorized, 0, "Unauthorized case", 0, false)]
+        public void CreateTest(ErrorMessages.Code errorCode, int accountId, string newTopicName, int dataCase, bool authorized)
         {
             var account = authorized ? new Account { Id = accountId } : null;
             var data = _data[dataCase].AsQueryable();
 
             var context = mockDbSet(data);
 
-            var service = new TopicService(context.Object);
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperProfile());
+            });
+            var mapper = config.CreateMapper();
+            var service = new TopicService(context.Object, mapper);
             var request = new CreateTopicRequest { Name = newTopicName };
 
-            Console.Write(newTopicName);
-            var resultValue = service.Create(request, account);
-            Assert.Equal(result, resultValue.ServiceResult);
-            Console.WriteLine("...done.");
+            TopicResponse resultValue = null;
+            var exception = Record.Exception(() => { resultValue = service.Create(request, account); });
+           
+            switch (errorCode)
+            {
+                case ErrorMessages.Code.Ok:
+                    Assert.NotNull(resultValue);
+                    Assert.Null(exception);
+                    break;
+                case ErrorMessages.Code.UnAuthorized:
+                    Assert.Equal(ErrorMessages.Text.GetValueOrDefault(errorCode), exception.Message);
+                    break;
+                case ErrorMessages.Code.Conflict:
+                    Assert.Equal(ErrorMessages.Text.GetValueOrDefault(errorCode), exception.Message);
+                    break;
+            }
         }
 
+        /*
         [Theory]
         [InlineData(ServiceResult.NoContent, 0, "Success case", 0, true, 0)]
         [InlineData(ServiceResult.NotFound, 0, "Not Found case", 1, true, 5)]
@@ -58,7 +77,7 @@ namespace UnitTests
             Assert.Equal(result, resultValue.ServiceResult);
             Console.WriteLine("...done.");
         }
-
+        */
         private Mock<DataContext> mockDbSet(IQueryable<Topic> data)
         {
             var topicDbSet = new Mock<DbSet<Topic>>();

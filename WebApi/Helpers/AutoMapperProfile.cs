@@ -1,6 +1,7 @@
 using AutoMapper;
 using WebApi.Entities;
 using WebApi.Models.Accounts;
+using WebApi.Models.Projects;
 
 namespace WebApi.Helpers
 {
@@ -31,6 +32,8 @@ namespace WebApi.Helpers
                         return true;
                     }
                 ));
+
+            CreateMap<Project, ProjectResponse>();
         }
     }
 }

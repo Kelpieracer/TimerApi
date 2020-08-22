@@ -1,12 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace WebApi.Entities
+namespace WebApi.Models.WorkItems
 {
-    public class WorkItem
+    public class WorkItemResponse
     {
         public int WorkItemId { get; set; }
         public string Details { get; set; }

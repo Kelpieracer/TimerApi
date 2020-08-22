@@ -19,14 +19,14 @@ namespace WebApi.Controllers
             _mapper = mapper;
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpPost("create")]
         public IActionResult Create(CreateTopicRequest model)
         {
             return reply.Get(_topicService.Create(model, Account));
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpDelete("delete")]
         public IActionResult Delete(DeleteTopicRequest model)
         {

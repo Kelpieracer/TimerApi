@@ -2,18 +2,17 @@ using AutoMapper;
 using System.Linq;
 using WebApi.Entities;
 using WebApi.Helpers;
-using WebApi.Models.Topics;
-using System;
+using WebApi.Models.Projects;
 
 namespace WebApi.Services
 {
-    public interface ITopicService
+    public interface IProjectService
     {
-        public ServiceReply Create(CreateTopicRequest model, Account account);
+        public ServiceReply Create(CreateProjectRequest model, Account account);
         public ServiceReply Delete(int id, Account account);
     }
 
-    public class TopicService : ITopicService
+    public class ProjectService : IProjectService
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -21,7 +20,7 @@ namespace WebApi.Services
         private readonly IEmailService _emailService;
 
 
-        public TopicService(
+        public ProjectService(
             DataContext context
             // IMapper mapper,
             // IOptions<AppSettings> appSettings,
@@ -34,18 +33,18 @@ namespace WebApi.Services
             // _emailService = emailService;
         }
 
-        public ServiceReply Create(CreateTopicRequest model, Account account)
+        public ServiceReply Create(CreateProjectRequest model, Account account)
         {
             if (account == null)
                 return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized access." };
 
-            var topic = new Topic { Name = model.Name, AccountId = account.Id };
-            if (_context.Topics.Any(t => t.Name == topic.Name && t.AccountId == topic.AccountId))
+            var Project = new Project { Name = model.Name, Manager = account };
+            if (_context.Projects.Any(t => t.Name == Project.Name && t.Manager.Id == Project.Manager.Id))
                 return new ServiceReply { ServiceResult = ServiceResult.Conflict, item = "Item already exists." };
 
-            _context.Topics.Add(topic);
+            _context.Projects.Add(Project);
             _context.SaveChanges();
-            return new ServiceReply { ServiceResult = ServiceResult.Created, item = new CreateTopicRequest { Name = topic.Name, Id = topic.TopicId } };
+            return new ServiceReply { ServiceResult = ServiceResult.Created, item = new CreateProjectRequest { Name = Project.Name, ProjectId = Project.ProjectId } };
         }
 
         public ServiceReply Delete(int id, Account account)
@@ -53,16 +52,16 @@ namespace WebApi.Services
             if (account == null)
                 return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized access." };
 
-            var topic = _context.Topics.FirstOrDefault(t => t.TopicId == id);
-            if (topic == null)
+            var Project = _context.Projects.FirstOrDefault(t => t.ProjectId == id);
+            if (Project == null)
                 return new ServiceReply { ServiceResult = ServiceResult.NotFound, item = "Item not found." };
 
-            if (topic.AccountId != account.Id)
+            if (Project.Manager.Id != account.Id)
                 return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized to delete this item." };
 
-            _context.Topics.Remove(topic);
+            _context.Projects.Remove(Project);
             _context.SaveChanges();
-            return new ServiceReply { ServiceResult = ServiceResult.NoContent, item = topic };
+            return new ServiceReply { ServiceResult = ServiceResult.NoContent, item = Project };
         }
     }
 }

@@ -18,6 +18,12 @@ namespace WebApi.Helpers
                     return new BadRequestObjectResult(serviceReply.item);
                 case ServiceResult.UnAuthorized:
                     return new UnauthorizedObjectResult(serviceReply.item);
+                case ServiceResult.NotFound:
+                    return new NotFoundObjectResult(serviceReply.item);
+                case ServiceResult.NoContent:
+                    return new NoContentResult();
+                case ServiceResult.Created:
+                    return new CreatedResult("Created", serviceReply.item);
             }
             return new BadRequestObjectResult("Unknown error");
         }

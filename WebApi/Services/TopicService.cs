@@ -53,7 +53,24 @@ namespace WebApi.Services
 
             _context.Topics.Add(topic);
             _context.SaveChanges();
-            return new ServiceReply { ServiceResult = ServiceResult.Ok, item = topic };
+            return new ServiceReply { ServiceResult = ServiceResult.Created, item = topic };
+        }
+
+        public ServiceReply Delete(int id, Account account)
+        {
+            if (account == null)
+                return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized access." };
+
+            var topic = _context.Topics.FirstOrDefault(t => t.TopicId == id);
+            if ( topic == null)
+                return new ServiceReply { ServiceResult = ServiceResult.NotFound, item = "Item not found." };
+
+            if (topic.Manager.Id != account.Id)
+                return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized to delete this item." };
+
+            _context.Topics.Remove(topic);
+            _context.SaveChanges();
+            return new ServiceReply { ServiceResult = ServiceResult.NoContent, item = topic };
         }
     }
 }

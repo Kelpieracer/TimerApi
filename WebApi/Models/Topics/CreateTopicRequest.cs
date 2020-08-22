@@ -7,4 +7,9 @@ namespace WebApi.Models.Topics
         [Required]
         public string Name { get; set; }
     }
+    public class DeleteTopicRequest
+    {
+        [Required]
+        public int Id { get; set; }
+    }
 }

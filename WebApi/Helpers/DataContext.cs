@@ -2,6 +2,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using WebApi.Entities;
+using System.Collections.Generic;
 
 namespace WebApi.Helpers
 {
@@ -14,11 +15,30 @@ namespace WebApi.Helpers
         public virtual DbSet<Topic> Topics { get; set; }
         public virtual DbSet<WorkItem> WorkItems { get; set; }
 
-        public DbSet<Account> Accounts { get; set; }
+        public virtual DbSet<Account> Accounts { get; set; }
         private readonly IConfiguration Configuration;
         public DataContext(IConfiguration configuration)
         {
             Configuration = configuration;
+        }
+
+        // Unit testing stub
+        public DataContext()
+        {
+            if (!IsRunningFromXUnit)
+                throw new Exception("DataContext initiated without parameters outside unit tests");
+        }
+
+        private static readonly bool IsRunningFromXUnit = _isRunningFromXUnit();
+        private static bool _isRunningFromXUnit()
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var item in assemblies)
+            {
+                if (item.FullName.ToLowerInvariant().StartsWith("testhost"))
+                    return true;
+            }
+            return false;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)

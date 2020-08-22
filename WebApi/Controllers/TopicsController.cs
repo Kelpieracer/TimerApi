@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using WebApi.Entities;
 using WebApi.Models.Topics;
 using WebApi.Services;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
@@ -15,6 +16,7 @@ namespace WebApi.Controllers
     {
         private readonly ITopicService _topicService;
         private readonly IMapper _mapper;
+        private readonly ControllerReply reply = new ControllerReply();
         public TopicsController(ITopicService topicService, IMapper mapper)
         {
             _topicService = topicService;
@@ -25,7 +27,7 @@ namespace WebApi.Controllers
         [HttpPost("create")]
         public IActionResult Create(CreateTopicRequest model)
         {
-            return _topicService.Create(model, Account);
+            return reply.Get(_topicService.Create(model, Account));
         }
     }
 }

@@ -18,7 +18,7 @@ namespace WebApi.Services
 {
     public interface ITopicService
     {
-        public IActionResult Create(CreateTopicRequest model, Account account);
+        public ServiceReply Create(CreateTopicRequest model, Account account);
     }
 
     public class TopicService : ITopicService
@@ -41,18 +41,19 @@ namespace WebApi.Services
             // _emailService = emailService;
         }
 
-        public IActionResult Create(CreateTopicRequest model, Account account)
+        public ServiceReply Create(CreateTopicRequest model, Account account)
         {
             if (account == null)
-                return new UnauthorizedResult();
+                return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized access." };
 
             var topic = new Topic { Name = model.Name, Manager = account };
             if (_context.Topics.Any(t => t.Name == topic.Name && t.Manager.Id == topic.Manager.Id))
-                return new ConflictResult();
+                return new ServiceReply { ServiceResult = ServiceResult.Conflict, item = "Item already exists." };
+
 
             _context.Topics.Add(topic);
             _context.SaveChanges();
-            return new OkResult();
+            return new ServiceReply { ServiceResult = ServiceResult.Ok, item = topic };
         }
     }
 }

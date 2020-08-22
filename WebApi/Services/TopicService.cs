@@ -1,24 +1,15 @@
 using AutoMapper;
-using BC = BCrypt.Net.BCrypt;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Models.Topics;
-using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Services
 {
     public interface ITopicService
     {
         public ServiceReply Create(CreateTopicRequest model, Account account);
+        public ServiceReply Delete(int id, Account account);
     }
 
     public class TopicService : ITopicService
@@ -27,6 +18,7 @@ namespace WebApi.Services
         private readonly IMapper _mapper;
         private readonly AppSettings _appSettings;
         private readonly IEmailService _emailService;
+
 
         public TopicService(
             DataContext context
@@ -50,10 +42,9 @@ namespace WebApi.Services
             if (_context.Topics.Any(t => t.Name == topic.Name && t.Manager.Id == topic.Manager.Id))
                 return new ServiceReply { ServiceResult = ServiceResult.Conflict, item = "Item already exists." };
 
-
             _context.Topics.Add(topic);
             _context.SaveChanges();
-            return new ServiceReply { ServiceResult = ServiceResult.Created, item = topic };
+            return new ServiceReply { ServiceResult = ServiceResult.Created, item = new CreateTopicRequest { Name = topic.Name, Id = topic.TopicId } };
         }
 
         public ServiceReply Delete(int id, Account account)
@@ -62,7 +53,7 @@ namespace WebApi.Services
                 return new ServiceReply { ServiceResult = ServiceResult.UnAuthorized, item = "Unauthorized access." };
 
             var topic = _context.Topics.FirstOrDefault(t => t.TopicId == id);
-            if ( topic == null)
+            if (topic == null)
                 return new ServiceReply { ServiceResult = ServiceResult.NotFound, item = "Item not found." };
 
             if (topic.Manager.Id != account.Id)

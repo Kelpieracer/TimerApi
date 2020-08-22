@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using WebApi.Entities;
+using WebApi.Helpers;
 using WebApi.Models.Topics;
 using WebApi.Services;
-using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
@@ -28,6 +24,13 @@ namespace WebApi.Controllers
         public IActionResult Create(CreateTopicRequest model)
         {
             return reply.Get(_topicService.Create(model, Account));
+        }
+
+        // [Authorize]
+        [HttpDelete("delete")]
+        public IActionResult Delete(DeleteTopicRequest model)
+        {
+            return reply.Get(_topicService.Delete(model.Id, Account));
         }
     }
 }

@@ -29,15 +29,16 @@ namespace WebApi.Services
         private readonly IEmailService _emailService;
 
         public TopicService(
-            DataContext context,
-            IMapper mapper,
-            IOptions<AppSettings> appSettings,
-            IEmailService emailService)
+            DataContext context
+            // IMapper mapper,
+            // IOptions<AppSettings> appSettings,
+            // IEmailService emailService
+            )
         {
             _context = context;
-            _mapper = mapper;
-            _appSettings = appSettings.Value;
-            _emailService = emailService;
+            // _mapper = mapper;
+            // _appSettings = appSettings.Value;
+            // _emailService = emailService;
         }
 
         public IActionResult Create(CreateTopicRequest model, Account account)

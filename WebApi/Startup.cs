@@ -33,14 +33,14 @@ namespace WebApi
             // configure strongly typed settings object
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient<ITopicRepository, TopicRepository>();
+
             // configure DI for application services
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITopicService, TopicService>();
             //services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IEmailService, EmailService>();
-
-            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
-            services.AddTransient<ITopicRepository, TopicRepository>();
         }
 
         // configure the HTTP request pipeline

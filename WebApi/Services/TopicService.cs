@@ -1,73 +1,70 @@
 using AutoMapper;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Models.Topics;
+using WebApi.Repositories;
 
 namespace WebApi.Services
 {
     public interface ITopicService
     {
-        public TopicResponse Create(CreateTopicRequest model, Account account);
-        public void Delete(int id, Account account);
+        public Task<TopicResponse> Create(CreateTopicRequest model, int accountId);
+        public Task<TopicResponse> Read(int id);
+        public Task<TopicResponse> Delete(int id, int accountId);
+        public Task<TopicResponse> Update(UpdateTopicRequest model, int accountId);
     }
 
     public class TopicService : ITopicService
     {
-        private readonly DataContext _context;
+        private readonly ITopicRepository _repository;
         private readonly IMapper _mapper;
 
-
         public TopicService(
-            DataContext context,
+            ITopicRepository repository,
              IMapper mapper
             )
         {
-            _context = context;
+            _repository = repository;
             _mapper = mapper;
         }
 
-        public TopicResponse Create(CreateTopicRequest model, Account account)
+        public async Task<TopicResponse> Create(CreateTopicRequest model, int accountId)
         {
-            var topic = new Topic { Name = model.Name, AccountId = account.Id };
-            if (_context.Topics.Any(t => t.Name == topic.Name && t.AccountId == topic.AccountId))
-                ErrorMessages.Throw(ErrorMessages.Code.Conflict);
-
-            _context.Topics.Add(topic);
-            _context.SaveChanges();
-            return _mapper.Map<TopicResponse>(topic);
+            var entity = _mapper.Map<Topic>(model);
+            entity.AccountId = accountId;
+            var response = await _repository.AddAsync(entity);
+            return _mapper.Map<TopicResponse>(response);
         }
 
-        public TopicResponse Read(int id)
+        public async Task<TopicResponse> Read(int id)
         {
-            var topic = _context.Topics.Find(id);
-            if (topic == null)
-                ErrorMessages.Throw(ErrorMessages.Code.NotFound);
-            return _mapper.Map<TopicResponse>(topic);
+            var entity = await _repository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
+            return _mapper.Map<TopicResponse>(entity);
         }
 
-        public TopicResponse Update(CreateTopicRequest model, Account account)
+        public async Task<TopicResponse> Update(UpdateTopicRequest model, int accountId)
         {
-            var topic = _context.Topics.FirstOrDefault(t => t.Id == model.Id && t.AccountId == account.Id);
-            if (topic == null)
-                ErrorMessages.Throw(ErrorMessages.Code.NotFound);
-            _mapper.Map(model, topic);
-            _context.SaveChanges();
-            return _mapper.Map<TopicResponse>(topic);
+            var entity = await AuthorizedEntity(model.Id, accountId);
+            _mapper.Map(model, entity);
+            var response = await _repository.UpdateAsync(entity);
+            return _mapper.Map<TopicResponse>(response);
         }
 
-        public void Delete(int id, Account account)
+        public async Task<TopicResponse> Delete(int id, int accountId)
         {
-            var topic = _context.Topics.FirstOrDefault(t => t.Id == id);
-            if (topic == null)
-                ErrorMessages.Throw(ErrorMessages.Code.NotFound);
+            await AuthorizedEntity(id, accountId);
+            var response = await _repository.DeleteAsync(id, accountId);
+            return _mapper.Map<TopicResponse>(response);
+        }
 
-            if (topic.AccountId != account.Id)
+        public async Task<Topic> AuthorizedEntity(int id, int accountId)
+        {
+            var entityToUpdate = await _repository.GetByIdAsync(id);
+            if (entityToUpdate.AccountId != accountId)
                 ErrorMessages.Throw(ErrorMessages.Code.UnAuthorized);
-
-            _context.Topics.Remove(topic);
-            _context.SaveChanges();
-            return;
+            return entityToUpdate;
         }
     }
 }

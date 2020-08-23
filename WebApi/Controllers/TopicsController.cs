@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApi.Helpers;
 using WebApi.Models.Topics;
 using WebApi.Services;
+using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
@@ -19,18 +20,24 @@ namespace WebApi.Controllers
         }
 
         [Authorize]
-        [HttpPost("create")]
-        public IActionResult Create(CreateTopicRequest model)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<TopicResponse>> Read(int id)
         {
-            return Ok(_topicService.Create(model, Account));
+            return Ok(await _topicService.Read(id));
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult<TopicResponse>> Create(CreateTopicRequest model)
+        {
+            return Ok(await _topicService.Create(model, Account.Id));
         }
 
         [Authorize]
         [HttpDelete("{id: int}")]
-        public IActionResult Delete(int id)
+        public async Task<ActionResult<TopicResponse>> Delete(int id)
         {
-            _topicService.Delete(id, Account);
-            return Ok(new { message = "Topic deleted successfully" });
+            return Ok(await _topicService.Delete(id, Account.Id));
         }
     }
 }

@@ -15,7 +15,7 @@ namespace WebApi
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>()
-                        .UseUrls("https://localhost:443");
+                        .UseUrls("https://localhost:44357");
                 });
     }
 }

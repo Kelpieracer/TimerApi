@@ -7,7 +7,7 @@ namespace WebApi.Models.Projects
     public class CreateProjectRequest
     {
         [Required]
-        public int ProjectId { get; set; }
+        public int Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

@@ -37,6 +37,8 @@ namespace WebApi.Helpers
 
             CreateMap<Topic, TopicResponse>();
 
+            CreateMap<CreateTopicRequest, Topic>();
+
             CreateMap<Project, ProjectResponse>();
 
             CreateMap<WorkItem, WorkItemResponse>();

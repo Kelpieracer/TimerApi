@@ -7,7 +7,7 @@ namespace WebApi.Entities
 {
     public class Customer
     {
-        public int CustomerId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public ICollection<Project> Projects { get; set; }
         public ICollection<Rate> Rates { get; set; }

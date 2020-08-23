@@ -7,7 +7,7 @@ namespace WebApi.Entities
 {
     public class Bill
     {
-        public int BillId { get; set; }
+        public int Id { get; set; }
         public ICollection<WorkItem> WorkItems { get; set; }
         public Customer Customer { get; set; }
         public DateTime? Billed { get; set; }

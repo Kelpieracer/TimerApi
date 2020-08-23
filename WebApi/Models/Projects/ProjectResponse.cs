@@ -8,7 +8,7 @@ namespace WebApi.Models.Projects
 {
     public class ProjectResponse
     {
-        public int ProjectId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public int CustomerId { get; set; }
         public List<WorkItemResponse> WorkItems { get; set; }

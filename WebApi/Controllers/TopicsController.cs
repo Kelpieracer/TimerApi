@@ -26,10 +26,10 @@ namespace WebApi.Controllers
         }
 
         [Authorize]
-        [HttpDelete("delete")]
-        public IActionResult Delete(DeleteTopicRequest model)
+        [HttpDelete("{id: int}")]
+        public IActionResult Delete(int id)
         {
-            _topicService.Delete(model.Id, Account);
+            _topicService.Delete(id, Account);
             return Ok(new { message = "Topic deleted successfully" });
         }
     }

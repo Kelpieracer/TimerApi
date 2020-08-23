@@ -8,7 +8,7 @@ namespace WebApi.Entities
 {
     public class WorkItem
     {
-        public int WorkItemId { get; set; }
+        public int Id { get; set; }
         public string Details { get; set; }
         public int TopicId { get; set; }
         public DateTime? Started { get; set; }

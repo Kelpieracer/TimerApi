@@ -4,7 +4,7 @@ namespace WebApi.Models.WorkItems
 {
     public class WorkItemResponse
     {
-        public int WorkItemId { get; set; }
+        public int Id { get; set; }
         public string Details { get; set; }
         public int TopicId { get; set; }
         public DateTime? Started { get; set; }

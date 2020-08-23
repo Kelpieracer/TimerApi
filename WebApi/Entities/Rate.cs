@@ -7,7 +7,7 @@ namespace WebApi.Entities
 {
     public class Rate
     {
-        public int RateId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
         public DateTime Started { get; set; }

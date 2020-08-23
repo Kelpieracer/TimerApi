@@ -8,7 +8,7 @@ namespace WebApi.Entities
 {
     public class Project
     {
-        public int ProjectId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public Customer Customer { get; set; }
         public ICollection<WorkItem> WorkItems { get; set; }

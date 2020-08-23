@@ -10,7 +10,7 @@ namespace WebApi.Models.Customers
 {
     public class CustomerResponse
     {
-        public int CustomerId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public List<ProjectResponse> Projects { get; set; }
         public List<RateResponse> Rates { get; set; }

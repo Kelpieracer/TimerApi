@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using WebApi.Helpers;
 using WebApi.Middleware;
+using WebApi.Repositories;
 using WebApi.Services;
 
 namespace WebApi
@@ -35,8 +36,11 @@ namespace WebApi
             // configure DI for application services
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITopicService, TopicService>();
-            services.AddScoped<IProjectService, ProjectService>();
+            //services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IEmailService, EmailService>();
+
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient<ITopicRepository, TopicRepository>();
         }
 
         // configure the HTTP request pipeline

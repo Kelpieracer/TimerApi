@@ -1,19 +1,15 @@
 ﻿// Unit testing controllers -- https://docs.microsoft.com/fi-fi/ef/ef6/fundamentals/testing/mocking?redirectedfrom=MSDN
 
+using AutoMapper;
+using Moq;
 using System.Collections.Generic;
-using System.Linq;
-using WebApi.Repositories;
+using WebApi.Entities;
 using WebApi.Helpers;
 using WebApi.Models.Topics;
+using WebApi.Repositories;
 using WebApi.Services;
-using WebApi.Tests.Mocks;
-using Xunit;
-using WebApi.Entities;
-using System.Threading.Tasks;
-using Moq;
 using WebApi.Tests;
-using System.Runtime.InteropServices.ComTypes;
-using AutoMapper;
+using Xunit;
 
 namespace UnitTests
 {

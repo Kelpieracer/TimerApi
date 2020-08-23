@@ -20,7 +20,7 @@ namespace WebApi.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<TopicResponse>> Read(int id)
         {
             return Ok(await _topicService.Read(id));
@@ -34,7 +34,14 @@ namespace WebApi.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id: int}")]
+        [HttpPut]
+        public async Task<ActionResult<TopicResponse>> Update(UpdateTopicRequest model)
+        {
+            return Ok(await _topicService.Update(model, Account.Id));
+        }
+
+        [Authorize]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<TopicResponse>> Delete(int id)
         {
             return Ok(await _topicService.Delete(id, Account.Id));

@@ -3,6 +3,7 @@ using WebApi.Entities;
 using WebApi.Models.Accounts;
 using WebApi.Models.Projects;
 using WebApi.Models.Topics;
+using WebApi.Models.WorkItems;
 
 namespace WebApi.Helpers
 {
@@ -37,6 +38,8 @@ namespace WebApi.Helpers
             CreateMap<Topic, TopicResponse>();
 
             CreateMap<Project, ProjectResponse>();
+
+            CreateMap<WorkItem, WorkItemResponse>();
         }
     }
 }

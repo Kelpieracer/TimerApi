@@ -2,75 +2,50 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using WebApi.Entities;
+using WebApi.Repositories;
 using WebApi.Helpers;
 using WebApi.Models.Topics;
 using WebApi.Services;
 using WebApi.Tests.Mocks;
 using Xunit;
+using WebApi.Entities;
+using System.Threading.Tasks;
+using Moq;
+using WebApi.Tests;
+using System.Runtime.InteropServices.ComTypes;
+using AutoMapper;
 
 namespace UnitTests
 {
     public class TopicServiceTests
     {
-
         [Theory]
-        [InlineData(ErrorMessages.Code.Ok, 0, "Success case", 0)]
-        [InlineData(ErrorMessages.Code.Conflict, 1, "Conflict case", 1)]
-        public void CreateTest(ErrorMessages.Code errorCode, int accountId, string newTopicName, int dataCase)
+        [InlineData(ErrorMessages.Code.Ok, 0, "Success case")]
+        [InlineData(ErrorMessages.Code.BadRequest, 0, "Null case")]
+        public async void CreateTest(ErrorMessages.Code errorCode, int accountId, string newName)
         {
-            var account = new Account { Id = accountId };
-            var data = CreateSampleData()[dataCase];
+            var mockRepository = new Mock<ITopicRepository>();
+            mockRepository.Setup((repo) => repo.AddAsync(It.IsAny<Topic>()))
+                .ReturnsAsync((Topic entity) => entity);
+            var mapper = MockMapper.GetNew();
+            var service = new TopicService(mockRepository.Object, mapper);
+            var request = errorCode == ErrorMessages.Code.Ok ? new CreateTopicRequest { Name = newName } : null;
 
-            (var context, var mapper) = MockDbSet.Create(data);
-
-            var service = new TopicService(context.Object, mapper);
-            var request = new CreateTopicRequest { Name = newTopicName };
-
-            var count = context.Object.Topics.Count();
             TopicResponse resultValue = null;
-            var exception = Record.Exception(() => { resultValue = service.Create(request, account); });
-           
-            switch (errorCode)
-            {
-                case ErrorMessages.Code.Ok:
-                    Assert.NotNull(resultValue);
-                    Assert.Null(exception);
-                    Assert.Equal(count + 1, context.Object.Topics.Count());
-                    break;
-                case ErrorMessages.Code.UnAuthorized:
-                case ErrorMessages.Code.Conflict:
-                    Assert.Equal(ErrorMessages.Text.GetValueOrDefault(errorCode), exception.Message);
-                    Assert.Equal(count, context.Object.Topics.Count());
-                    break;
-                default:
-                    throw new AppException("Unexpected exception");
-            }
-        }
-
-        [Theory]
-        [InlineData(ErrorMessages.Code.Ok, 24,  0)]
-        [InlineData(ErrorMessages.Code.NotFound, 100, 1)]
-        public void ReadTest(ErrorMessages.Code errorCode, int itemId, int dataCase)
-        {
-            var data = CreateSampleData()[dataCase];
-
-            (var context, var mapper) = MockDbSet.Create(data);
-
-            var service = new TopicService(context.Object, mapper);
-
-            var count = context.Object.Topics.Count();
-            TopicResponse resultValue = null;
-            var exception = Record.Exception(() => { resultValue = service.Read(itemId); });
-            Assert.Equal(count, context.Object.Topics.Count());
+            var exception = await Record.ExceptionAsync(async () => { resultValue = await service.Create(request, accountId); });
 
             switch (errorCode)
             {
                 case ErrorMessages.Code.Ok:
                     Assert.NotNull(resultValue);
                     Assert.Null(exception);
+                    Assert.Equal(newName, resultValue.Name);
+                    Assert.Equal(accountId, resultValue.AccountId);
+                    Assert.Equal(0, resultValue.Id);
                     break;
-                case ErrorMessages.Code.NotFound:
+                case ErrorMessages.Code.BadRequest:
+                    Assert.NotNull(exception);
+                    Assert.Null(resultValue);
                     Assert.Equal(ErrorMessages.Text.GetValueOrDefault(errorCode), exception.Message);
                     break;
                 default:
@@ -79,79 +54,85 @@ namespace UnitTests
         }
 
         [Theory]
-        [InlineData(ErrorMessages.Code.Ok, 1, "Success case", 0, 24)]
-        [InlineData(ErrorMessages.Code.NotFound, 1, "Conflict case", 1, 1000)]
-        [InlineData(ErrorMessages.Code.NotFound, 1000, "Unauthorized case", 0, 24)]
-        public void UpdateTest(ErrorMessages.Code errorCode, int accountId, string newTopicName, int dataCase, int idToUpdate)
+        [InlineData(ErrorMessages.Code.Ok, 10, "Success case")]
+        [InlineData(ErrorMessages.Code.BadRequest, 10, "Null case")]
+        [InlineData(ErrorMessages.Code.UnAuthorized, 1000, "Null case")]
+        public async void UpdateTest(ErrorMessages.Code errorCode, int accountId, string newName)
         {
-            var account = new Account { Id = accountId };
-            var data = CreateSampleData()[dataCase];
+            var entity = new Topic { Name = "Test", AccountId = 10, Id = 1 };
+            var mockRepository = new Mock<ITopicRepository>();
+            mockRepository.Setup((repo) => repo.UpdateAsync(It.IsAny<Topic>()))
+                .ReturnsAsync(() => entity);
+            mockRepository.Setup((repo) => repo.GetByIdAsync(entity.Id))
+                .ReturnsAsync(() => entity);
+            var mapper = MockMapper.GetNew();
+            var service = new TopicService(mockRepository.Object, mapper);
+            var request = errorCode != ErrorMessages.Code.BadRequest ? new UpdateTopicRequest { Name = newName, Id = 1 } : null;
 
-            (var context, var mapper) = MockDbSet.Create(data);
-
-            var service = new TopicService(context.Object, mapper);
-            var request = new CreateTopicRequest { Name = newTopicName, Id = idToUpdate };
-
-            var count = context.Object.Topics.Count();
             TopicResponse resultValue = null;
-            var exception = Record.Exception(() => { resultValue = service.Update(request, account); });
-            Assert.Equal(count, context.Object.Topics.Count());
+            var exception = await Record.ExceptionAsync(async () => { resultValue = await service.Update(request, accountId); });
 
             switch (errorCode)
             {
                 case ErrorMessages.Code.Ok:
                     Assert.NotNull(resultValue);
-                    Assert.Equal(newTopicName, resultValue.Name);
-                    Assert.Equal(idToUpdate, resultValue.Id);
                     Assert.Null(exception);
+                    Assert.Equal(newName, resultValue.Name);
+                    Assert.Equal(accountId, resultValue.AccountId);
+                    Assert.Equal(1, resultValue.Id);
                     break;
+                case ErrorMessages.Code.BadRequest:
                 case ErrorMessages.Code.UnAuthorized:
-                case ErrorMessages.Code.NotFound:
+                    Assert.NotNull(exception);
+                    Assert.Null(resultValue);
                     Assert.Equal(ErrorMessages.Text.GetValueOrDefault(errorCode), exception.Message);
-                    Assert.Equal(count, context.Object.Topics.Count());
                     break;
                 default:
                     throw new AppException("Unexpected exception");
             }
         }
 
-
-
         [Theory]
-        [InlineData(ErrorMessages.Code.Ok, 1, 0, 24)]
-        [InlineData(ErrorMessages.Code.NotFound, 0, 1, 5)]
-        [InlineData(ErrorMessages.Code.UnAuthorized, 10, 0, 24)]
-        public void DeleteTest(ErrorMessages.Code errorCode, int accountId, int dataCase,  int idToDelete)
+        [InlineData(ErrorMessages.Code.Ok, 10, 1)]
+        [InlineData(ErrorMessages.Code.BadRequest, 10, 1000)]
+        [InlineData(ErrorMessages.Code.UnAuthorized, 1000, 1)]
+        public async void DeleteTest(ErrorMessages.Code errorCode, int accountId, int id)
         {
-            var account = new Account { Id = accountId };
-            var data = CreateSampleData()[dataCase];
+            (var entity, var mockRepository, var mapper, var service) = GetSetup();
+            mockRepository.Setup((repo) => repo.DeleteAsync(1, 10))
+                .ReturnsAsync(() => entity);
+            mockRepository.Setup((repo) => repo.GetByIdAsync(entity.Id))
+                .ReturnsAsync(() => entity);
 
-            (var context, var mapper) = MockDbSet.Create(data);
-            var service = new TopicService(context.Object, mapper);
+            TopicResponse resultValue = null;
+            var exception = await Record.ExceptionAsync(async () => { resultValue = await service.Delete(id, accountId); });
 
-            var count = context.Object.Topics.Count();
-            var exception = Record.Exception(() => service.Delete(idToDelete, account));
             switch (errorCode)
             {
                 case ErrorMessages.Code.Ok:
+                    Assert.NotNull(resultValue);
                     Assert.Null(exception);
-                    Assert.Equal(count - 1, context.Object.Topics.Count());
+                    Assert.Equal("Test", resultValue.Name);
+                    Assert.Equal(1, resultValue.Id);
                     break;
                 case ErrorMessages.Code.UnAuthorized:
-                case ErrorMessages.Code.NotFound:
+                case ErrorMessages.Code.BadRequest:
+                    Assert.NotNull(exception);
+                    Assert.Null(resultValue);
                     Assert.Equal(ErrorMessages.Text.GetValueOrDefault(errorCode), exception.Message);
-                    Assert.Equal(count, context.Object.Topics.Count());
                     break;
                 default:
                     throw new AppException("Unexpected exception");
             }
         }
 
-        private List<List<Topic>> CreateSampleData() {
-            return  new List<List<Topic>> {
-                    new List<Topic> { new Topic { Name = "BBB", AccountId = 1, Id = 24}, },
-                    new List<Topic> { new Topic { Name = "BBB", AccountId = 1, Id = 24 }, new Topic { Name = "Conflict case", AccountId = 1, Id = 25 }, },
-        };
+        (Topic, Mock<ITopicRepository>, IMapper, TopicService) GetSetup()
+        {
+            var entity = new Topic { Name = "Test", AccountId = 10, Id = 1 };
+            var mockRepository = new Mock<ITopicRepository>();
+            var mapper = MockMapper.GetNew();
+            var service = new TopicService(mockRepository.Object, mapper);
+            return (entity, mockRepository, mapper, service);
         }
     }
 }

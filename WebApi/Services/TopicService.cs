@@ -32,6 +32,7 @@ namespace WebApi.Services
 
         public async Task<TopicResponse> Create(CreateTopicRequest model, int accountId)
         {
+            if (model == null) ErrorMessages.Throw(ErrorMessages.Code.BadRequest);
             var entity = _mapper.Map<Topic>(model);
             entity.AccountId = accountId;
             var response = await _repository.AddAsync(entity);
@@ -40,12 +41,15 @@ namespace WebApi.Services
 
         public async Task<TopicResponse> Read(int id)
         {
-            var entity = await _repository.GetAll().FirstOrDefaultAsync(x => x.Id == id);
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null)
+                ErrorMessages.Throw(ErrorMessages.Code.NotFound);
             return _mapper.Map<TopicResponse>(entity);
         }
 
         public async Task<TopicResponse> Update(UpdateTopicRequest model, int accountId)
         {
+            if (model == null) ErrorMessages.Throw(ErrorMessages.Code.BadRequest);
             var entity = await AuthorizedEntity(model.Id, accountId);
             _mapper.Map(model, entity);
             var response = await _repository.UpdateAsync(entity);
@@ -62,6 +66,9 @@ namespace WebApi.Services
         public async Task<Topic> AuthorizedEntity(int id, int accountId)
         {
             var entityToUpdate = await _repository.GetByIdAsync(id);
+            if(entityToUpdate == null)
+                ErrorMessages.Throw(ErrorMessages.Code.BadRequest);
+
             if (entityToUpdate.AccountId != accountId)
                 ErrorMessages.Throw(ErrorMessages.Code.UnAuthorized);
             return entityToUpdate;

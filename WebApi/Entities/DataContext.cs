@@ -1,8 +1,7 @@
-using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System;
 using WebApi.Entities;
-using System.Collections.Generic;
 
 namespace WebApi.Helpers
 {
@@ -14,8 +13,9 @@ namespace WebApi.Helpers
         public virtual DbSet<Rate> Rates { get; set; }
         public virtual DbSet<Topic> Topics { get; set; }
         public virtual DbSet<WorkItem> WorkItems { get; set; }
-
+        public virtual DbSet<Member> ProjectMembers { get; set; }
         public virtual DbSet<Account> Accounts { get; set; }
+
         private readonly IConfiguration Configuration;
         public DataContext(IConfiguration configuration)
         {

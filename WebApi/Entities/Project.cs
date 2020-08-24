@@ -1,19 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 namespace WebApi.Entities
 {
     public class Project
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public Customer Customer { get; set; }
-        public ICollection<WorkItem> WorkItems { get; set; }
-        public ICollection<Rate> Rates { get; set; }
-        public Account Manager { get; set; }
-        public ICollection<Account> Members { get; set; }
+        public virtual int ProjectId { get; set; }
+        public virtual string Name { get; set; }
+        public virtual List<WorkItem> WorkItems { get; set; }
+        public virtual DateTime Created { get; set; }
+        public virtual DateTime? Modified { get; set; }
+        public virtual int AccountId { get; set; }
+
+        //public List<Member> Members { get; set; }
+        //public List<TopicsForProject> TopicsForProject { get; set; }
+
+        //public Customer Customer { get; set; }
+        //public int? CustomerId { get; set; }
+        public Project()
+        {
+            Created = DateTime.UtcNow;
+        }
     }
 }

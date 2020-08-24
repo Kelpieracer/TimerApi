@@ -1,10 +1,11 @@
 ﻿using System;
-using WebApi.Models;
+using System.ComponentModel.DataAnnotations;
+
 namespace WebApi.Models.WorkItems
 {
-    public class WorkItemResponse : CommonResponses
+    public class CreateWorkItemRequest
     {
-        public int WorkItemId { get; set; }
+        [Required]
         public string Name { get; set; }
         public int? TopicId { get; set; }
         public DateTime? Started { get; set; }

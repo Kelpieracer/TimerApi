@@ -243,7 +243,7 @@ namespace WebApi.Services
 
             // copy model to account and save
             _mapper.Map(model, account);
-            account.Updated = DateTime.UtcNow;
+            account.Modified = DateTime.UtcNow;
             _context.Accounts.Update(account);
             _context.SaveChanges();
 
@@ -281,7 +281,7 @@ namespace WebApi.Services
             var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("TIMER_SECRET"));
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", account.Id.ToString()) }),
+                Subject = new ClaimsIdentity(new[] { new Claim("id", account.AccountId.ToString()) }),
                 Expires = DateTime.UtcNow.AddMinutes(15),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

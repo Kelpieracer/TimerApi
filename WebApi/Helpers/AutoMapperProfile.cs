@@ -40,8 +40,12 @@ namespace WebApi.Helpers
             CreateMap<UpdateTopicRequest, Topic>();
 
             CreateMap<Project, ProjectResponse>();
+            CreateMap<CreateProjectRequest, Project>();
+            CreateMap<UpdateProjectRequest, Project>();
 
             CreateMap<WorkItem, WorkItemResponse>();
+            CreateMap<CreateWorkItemRequest, WorkItem>();
+            CreateMap<UpdateWorkItemRequest, WorkItem>();
         }
     }
 }

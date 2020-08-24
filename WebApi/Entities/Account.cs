@@ -5,7 +5,7 @@ namespace WebApi.Entities
 {
     public class Account
     {
-        public int Id { get; set; }
+        public int AccountId { get; set; }
         public string Title { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -20,8 +20,16 @@ namespace WebApi.Entities
         public DateTime? ResetTokenExpires { get; set; }
         public DateTime? PasswordReset { get; set; }
         public DateTime Created { get; set; }
-        public DateTime? Updated { get; set; }
+        public DateTime? Modified { get; set; }
         public List<RefreshToken> RefreshTokens { get; set; }
+
+        //public List<Bill> Bills { get; set; }
+        //public List<Customer> Customers { get; set; }
+        //public List<Project> Projects { get; set; }
+        //public List<Rate> Rates { get; set; }
+        //public List<Topic> Topics { get; set; }
+        //public List<WorkItem> WorkItems { get; set; }
+        //public List<Member> Members { get; set; }
 
         public bool OwnsToken(string token)
         {

@@ -5,7 +5,7 @@ namespace WebApi.Models.Topics
     public class UpdateTopicRequest
     {
         [Required]
-        public int Id { get; set; }
+        public int TopicId { get; set; }
         [Required]
         public string Name { get; set; }
     }

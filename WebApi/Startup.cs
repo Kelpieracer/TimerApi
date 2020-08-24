@@ -35,11 +35,14 @@ namespace WebApi
 
             services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<ITopicRepository, TopicRepository>();
+            services.AddTransient<IProjectRepository, ProjectRepository>();
+            services.AddTransient<IWorkItemRepository, WorkItemRepository>();
 
             // configure DI for application services
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITopicService, TopicService>();
-            //services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IWorkItemService, WorkItemService>();
             services.AddScoped<IEmailService, EmailService>();
         }
 

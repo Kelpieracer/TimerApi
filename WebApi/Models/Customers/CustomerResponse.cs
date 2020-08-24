@@ -8,9 +8,9 @@ using WebApi.Models.Rates;
 
 namespace WebApi.Models.Customers
 {
-    public class CustomerResponse
+    public class CustomerResponse : CommonResponses
     {
-        public int Id { get; set; }
+        public int CustomerId { get; set; }
         public string Name { get; set; }
         public List<ProjectResponse> Projects { get; set; }
         public List<RateResponse> Rates { get; set; }

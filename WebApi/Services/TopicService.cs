@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 using WebApi.Entities;
 using WebApi.Helpers;
@@ -10,8 +11,8 @@ namespace WebApi.Services
 {
     public interface ITopicService
     {
-        public Task<TopicResponse> Create(CreateTopicRequest model, int accountId);
-        public Task<TopicResponse> Read(int id);
+        public Task<TopicResponse> Create(CreateTopicRequest model, Account account);
+        public TopicResponse Read(int id);
         public Task<TopicResponse> Delete(int id, int accountId);
         public Task<TopicResponse> Update(UpdateTopicRequest model, int accountId);
     }
@@ -30,18 +31,18 @@ namespace WebApi.Services
             _mapper = mapper;
         }
 
-        public async Task<TopicResponse> Create(CreateTopicRequest model, int accountId)
+        public async Task<TopicResponse> Create(CreateTopicRequest model, Account account)
         {
             if (model == null) ErrorMessages.Throw(ErrorMessages.Code.BadRequest);
             var entity = _mapper.Map<Topic>(model);
-            entity.AccountId = accountId;
+            entity.AccountId = account.AccountId;
             var response = await _repository.AddAsync(entity);
             return _mapper.Map<TopicResponse>(response);
         }
 
-        public async Task<TopicResponse> Read(int id)
+        public TopicResponse Read(int id)
         {
-            var entity = await _repository.GetByIdAsync(id);
+            var entity = _repository.GetById(id);
             if (entity == null)
                 ErrorMessages.Throw(ErrorMessages.Code.NotFound);
             return _mapper.Map<TopicResponse>(entity);
@@ -50,22 +51,23 @@ namespace WebApi.Services
         public async Task<TopicResponse> Update(UpdateTopicRequest model, int accountId)
         {
             if (model == null) ErrorMessages.Throw(ErrorMessages.Code.BadRequest);
-            var entity = await AuthorizedEntity(model.Id, accountId);
+            var entity = AuthorizedEntity(model.TopicId, accountId);
             _mapper.Map(model, entity);
+            entity.Modified = DateTime.UtcNow;
             var response = await _repository.UpdateAsync(entity);
             return _mapper.Map<TopicResponse>(response);
         }
 
         public async Task<TopicResponse> Delete(int id, int accountId)
         {
-            await AuthorizedEntity(id, accountId);
+            AuthorizedEntity(id, accountId);
             var response = await _repository.DeleteAsync(id, accountId);
             return _mapper.Map<TopicResponse>(response);
         }
 
-        public async Task<Topic> AuthorizedEntity(int id, int accountId)
+        public Topic AuthorizedEntity(int id, int accountId)
         {
-            var entityToUpdate = await _repository.GetByIdAsync(id);
+            var entityToUpdate = _repository.GetById(id);
             if(entityToUpdate == null)
                 ErrorMessages.Throw(ErrorMessages.Code.BadRequest);
 

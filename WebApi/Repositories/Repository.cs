@@ -1,15 +1,18 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using WebApi.Entities;
 using WebApi.Helpers;
 
 namespace WebApi.Repositories
 {
     public interface IRepository<TEntity> where TEntity : class, new()
     {
-        public IQueryable<TEntity> GetAll();
-        public Task<TEntity> GetByIdAsync(int id);
+        public Task<IList<TEntity>> GetAsync(Expression<Func<TEntity, bool>> expression);
+        public TEntity GetById(int id);
         public Task<TEntity> AddAsync(TEntity entity);
         public Task<TEntity> UpdateAsync(TEntity entity);
         public Task<TEntity> DeleteAsync(int id, int accountId);
@@ -24,27 +27,17 @@ namespace WebApi.Repositories
             _context = context;
         }
 
-        public IQueryable<TEntity> GetAll()
+        public async Task<IList<TEntity>> GetAsync(Expression<Func<TEntity, bool>> expression)
         {
-            try
-            {
-                var items = _context.Set<TEntity>();
-                return items;
-            }
-            catch (Exception)
-            {
-                throw new Exception("Couldn't retrieve entities");
-            }
+            return await _context.Set<TEntity>().Where(expression).ToListAsync();
         }
 
-        public async Task<TEntity> GetByIdAsync(int id)
+        public TEntity GetById(int id)
         {
             try
             {
                 var items = _context.Set<TEntity>();
-                var item = await items.FindAsync(id);
-                if(item == null)
-                    throw new Exception("Couldn't find the entity");
+                var item = items.Find(id);
                 return item;
             }
             catch (Exception)
@@ -111,6 +104,14 @@ namespace WebApi.Repositories
             {
                 throw new AppException($"{nameof(entity)} could not be deleted. {err.Message}");
             }
+        }
+
+        public async Task<Account> GetAccount(int Id)
+        {
+            var account = await _context.Accounts.FindAsync(Id);
+            if (account == null)
+                ErrorMessages.Throw(ErrorMessages.Code.UnAuthorized);
+            return account;
         }
     }
 }

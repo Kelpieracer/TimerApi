@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebApi.Entities
 {
     public class Bill
     {
-        public int Id { get; set; }
-        public ICollection<WorkItem> WorkItems { get; set; }
-        public Customer Customer { get; set; }
-        public DateTime? Billed { get; set; }
-        public DateTime? Paid { get; set; }
+        public virtual int BillId { get; set; }
+        public virtual DateTime Created { get; set; }
+        public virtual DateTime? Modified { get; set; }
+        public virtual int AccountId { get; set; }
+        public Bill()
+        {
+            Created = DateTime.UtcNow;
+        }
+
+        public virtual DateTime? Billed { get; set; }
+        public virtual DateTime? Paid { get; set; }
+        public virtual List<WorkItem> WorkItems { get; set; }
+        public virtual int? CustomerId { get; set; }
     }
 }

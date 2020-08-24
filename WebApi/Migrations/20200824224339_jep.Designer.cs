@@ -10,8 +10,8 @@ using WebApi.Helpers;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200821130924_RemovedUsers")]
-    partial class RemovedUsers
+    [Migration("20200824224339_jep")]
+    partial class jep
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,7 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Entities.Account", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("AccountId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -43,14 +43,14 @@ namespace WebApi.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("PasswordReset")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("int");
 
                     b.Property<string>("ResetToken")
                         .HasColumnType("nvarchar(max)");
@@ -64,18 +64,13 @@ namespace WebApi.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Updated")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("VerificationToken")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Verified")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
+                    b.HasKey("AccountId");
 
                     b.ToTable("Accounts");
                 });
@@ -87,18 +82,25 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("Billed")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("Paid")
                         .HasColumnType("datetime2");
 
                     b.HasKey("BillId");
-
-                    b.HasIndex("CustomerId");
 
                     b.ToTable("Bills");
                 });
@@ -110,17 +112,47 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ManagerId")
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CustomerId");
 
-                    b.HasIndex("ManagerId");
-
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("WebApi.Entities.Member", b =>
+                {
+                    b.Property<int>("MemberId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MemberId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectMembers");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Project", b =>
@@ -130,11 +162,17 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ManagerId")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -142,8 +180,6 @@ namespace WebApi.Migrations
                     b.HasKey("ProjectId");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("ManagerId");
 
                     b.ToTable("Projects");
                 });
@@ -155,29 +191,33 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Ended")
+                    b.Property<DateTime?>("Ended")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Modified")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Started")
+                    b.Property<DateTime?>("Started")
                         .HasColumnType("datetime2");
 
                     b.HasKey("RateId");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("ProjectId");
 
                     b.ToTable("Rates");
                 });
@@ -189,17 +229,52 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ManagerId")
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TopicId");
 
-                    b.HasIndex("ManagerId");
-
                     b.ToTable("Topics");
+                });
+
+            modelBuilder.Entity("WebApi.Entities.TopicsForProject", b =>
+                {
+                    b.Property<int>("TopicsForProjectId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TopicId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TopicsForProjectId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("TopicsForProject");
                 });
 
             modelBuilder.Entity("WebApi.Entities.WorkItem", b =>
@@ -209,29 +284,29 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("BillId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Details")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("Ended")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int?>("RateId")
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("Started")
                         .HasColumnType("datetime2");
-
-                    b.Property<int?>("TopicsTopicId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkerId")
-                        .HasColumnType("int");
 
                     b.HasKey("WorkItemId");
 
@@ -239,21 +314,11 @@ namespace WebApi.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.HasIndex("RateId");
-
-                    b.HasIndex("TopicsTopicId");
-
-                    b.HasIndex("WorkerId");
-
                     b.ToTable("WorkItems");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Account", b =>
                 {
-                    b.HasOne("WebApi.Entities.Project", null)
-                        .WithMany("Members")
-                        .HasForeignKey("ProjectId");
-
                     b.OwnsMany("WebApi.Entities.RefreshToken", "RefreshTokens", b1 =>
                         {
                             b1.Property<int>("Id")
@@ -296,29 +361,20 @@ namespace WebApi.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WebApi.Entities.Bill", b =>
+            modelBuilder.Entity("WebApi.Entities.Member", b =>
                 {
-                    b.HasOne("WebApi.Entities.Customer", "Customer")
+                    b.HasOne("WebApi.Entities.Project", "Project")
                         .WithMany()
-                        .HasForeignKey("CustomerId");
-                });
-
-            modelBuilder.Entity("WebApi.Entities.Customer", b =>
-                {
-                    b.HasOne("WebApi.Entities.Account", "Manager")
-                        .WithMany()
-                        .HasForeignKey("ManagerId");
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebApi.Entities.Project", b =>
                 {
-                    b.HasOne("WebApi.Entities.Customer", "Customer")
+                    b.HasOne("WebApi.Entities.Customer", null)
                         .WithMany("Projects")
                         .HasForeignKey("CustomerId");
-
-                    b.HasOne("WebApi.Entities.Account", "Manager")
-                        .WithMany()
-                        .HasForeignKey("ManagerId");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Rate", b =>
@@ -326,17 +382,21 @@ namespace WebApi.Migrations
                     b.HasOne("WebApi.Entities.Customer", null)
                         .WithMany("Rates")
                         .HasForeignKey("CustomerId");
-
-                    b.HasOne("WebApi.Entities.Project", null)
-                        .WithMany("Rates")
-                        .HasForeignKey("ProjectId");
                 });
 
-            modelBuilder.Entity("WebApi.Entities.Topic", b =>
+            modelBuilder.Entity("WebApi.Entities.TopicsForProject", b =>
                 {
-                    b.HasOne("WebApi.Entities.Account", "Manager")
+                    b.HasOne("WebApi.Entities.Project", "Project")
                         .WithMany()
-                        .HasForeignKey("ManagerId");
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Entities.Topic", "Topic")
+                        .WithMany("TopicsForProjects")
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebApi.Entities.WorkItem", b =>
@@ -347,19 +407,9 @@ namespace WebApi.Migrations
 
                     b.HasOne("WebApi.Entities.Project", "Project")
                         .WithMany("WorkItems")
-                        .HasForeignKey("ProjectId");
-
-                    b.HasOne("WebApi.Entities.Rate", "Rate")
-                        .WithMany()
-                        .HasForeignKey("RateId");
-
-                    b.HasOne("WebApi.Entities.Topic", "Topics")
-                        .WithMany()
-                        .HasForeignKey("TopicsTopicId");
-
-                    b.HasOne("WebApi.Entities.Account", "Worker")
-                        .WithMany()
-                        .HasForeignKey("WorkerId");
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

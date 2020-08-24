@@ -20,6 +20,7 @@ namespace UnitTests
         [InlineData(ErrorMessages.Code.BadRequest, 0, "Null case")]
         public async void CreateTest(ErrorMessages.Code errorCode, int accountId, string newName)
         {
+            var account = new Account { AccountId = accountId };
             var mockRepository = new Mock<ITopicRepository>();
             mockRepository.Setup((repo) => repo.AddAsync(It.IsAny<Topic>()))
                 .ReturnsAsync((Topic entity) => entity);
@@ -28,7 +29,7 @@ namespace UnitTests
             var request = errorCode == ErrorMessages.Code.Ok ? new CreateTopicRequest { Name = newName } : null;
 
             TopicResponse resultValue = null;
-            var exception = await Record.ExceptionAsync(async () => { resultValue = await service.Create(request, accountId); });
+            var exception = await Record.ExceptionAsync(async () => { resultValue = await service.Create(request, account); });
 
             switch (errorCode)
             {
@@ -37,7 +38,7 @@ namespace UnitTests
                     Assert.Null(exception);
                     Assert.Equal(newName, resultValue.Name);
                     Assert.Equal(accountId, resultValue.AccountId);
-                    Assert.Equal(0, resultValue.Id);
+                    Assert.Equal(0, resultValue.TopicId);
                     break;
                 case ErrorMessages.Code.BadRequest:
                     Assert.NotNull(exception);
@@ -55,15 +56,15 @@ namespace UnitTests
         [InlineData(ErrorMessages.Code.UnAuthorized, 1000, "Null case")]
         public async void UpdateTest(ErrorMessages.Code errorCode, int accountId, string newName)
         {
-            var entity = new Topic { Name = "Test", AccountId = 10, Id = 1 };
+            var entity = new Topic { Name = "Test", AccountId = accountId, TopicId = 1 };
             var mockRepository = new Mock<ITopicRepository>();
             mockRepository.Setup((repo) => repo.UpdateAsync(It.IsAny<Topic>()))
                 .ReturnsAsync(() => entity);
-            mockRepository.Setup((repo) => repo.GetByIdAsync(entity.Id))
+            mockRepository.Setup((repo) => repo.GetById(entity.TopicId))
                 .ReturnsAsync(() => entity);
             var mapper = MockMapper.GetNew();
             var service = new TopicService(mockRepository.Object, mapper);
-            var request = errorCode != ErrorMessages.Code.BadRequest ? new UpdateTopicRequest { Name = newName, Id = 1 } : null;
+            var request = errorCode != ErrorMessages.Code.BadRequest ? new UpdateTopicRequest { Name = newName, TopicId = 1 } : null;
 
             TopicResponse resultValue = null;
             var exception = await Record.ExceptionAsync(async () => { resultValue = await service.Update(request, accountId); });
@@ -75,7 +76,7 @@ namespace UnitTests
                     Assert.Null(exception);
                     Assert.Equal(newName, resultValue.Name);
                     Assert.Equal(accountId, resultValue.AccountId);
-                    Assert.Equal(1, resultValue.Id);
+                    Assert.Equal(1, resultValue.TopicId);
                     break;
                 case ErrorMessages.Code.BadRequest:
                 case ErrorMessages.Code.UnAuthorized:
@@ -97,7 +98,7 @@ namespace UnitTests
             (var entity, var mockRepository, var mapper, var service) = GetSetup();
             mockRepository.Setup((repo) => repo.DeleteAsync(1, 10))
                 .ReturnsAsync(() => entity);
-            mockRepository.Setup((repo) => repo.GetByIdAsync(entity.Id))
+            mockRepository.Setup((repo) => repo.GetById(entity.TopicId))
                 .ReturnsAsync(() => entity);
 
             TopicResponse resultValue = null;
@@ -109,7 +110,7 @@ namespace UnitTests
                     Assert.NotNull(resultValue);
                     Assert.Null(exception);
                     Assert.Equal("Test", resultValue.Name);
-                    Assert.Equal(1, resultValue.Id);
+                    Assert.Equal(1, resultValue.TopicId);
                     break;
                 case ErrorMessages.Code.UnAuthorized:
                 case ErrorMessages.Code.BadRequest:
@@ -124,7 +125,7 @@ namespace UnitTests
 
         (Topic, Mock<ITopicRepository>, IMapper, TopicService) GetSetup()
         {
-            var entity = new Topic { Name = "Test", AccountId = 10, Id = 1 };
+            var entity = new Topic { Name = "Test", AccountId = 10, TopicId = 1 };
             var mockRepository = new Mock<ITopicRepository>();
             var mapper = MockMapper.GetNew();
             var service = new TopicService(mockRepository.Object, mapper);

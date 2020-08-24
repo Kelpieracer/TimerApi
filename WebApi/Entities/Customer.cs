@@ -7,10 +7,17 @@ namespace WebApi.Entities
 {
     public class Customer
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public ICollection<Project> Projects { get; set; }
-        public ICollection<Rate> Rates { get; set; }
-        public Account Manager { get; set; }
+        public virtual int CustomerId { get; set; }
+        public virtual DateTime Created { get; set; }
+        public virtual DateTime? Modified { get; set; }
+        public virtual int AccountId { get; set; }
+        public Customer()
+        {
+            Created = DateTime.UtcNow;
+        }
+
+        public virtual string Name { get; set; }
+        public virtual List<Rate> Rates { get; set; }
+        public virtual List<Project> Projects { get; set; }
     }
 }

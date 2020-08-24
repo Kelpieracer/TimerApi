@@ -4,8 +4,10 @@ using WebApi.Entities;
 
 namespace WebApi.Models.Projects
 {
-    public class CreateProjectRequest
+    public class UpdateProjectRequest
     {
+        [Required]
+        public int ProjectId { get; set; }
         [Required]
         public string Name { get; set; }
         public int? CustomerId { get; set; }

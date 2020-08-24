@@ -1,11 +1,10 @@
-﻿using WebApi.Models.Accounts;
+﻿using WebApi.Models;
 
 namespace WebApi.Models.Topics
 {
-    public class TopicResponse
+    public class TopicResponse : CommonResponses
     {
-        public int Id { get; set; }
+        public int TopicId { get; set; }
         public string Name { get; set; }
-        public int AccountId { get; set; }
     }
 }

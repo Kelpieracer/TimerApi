@@ -12,7 +12,7 @@ namespace WebApi.Entities
         public virtual DateTime? Modified { get; set; }
         public virtual int AccountId { get; set; }
 
-        //public List<Member> Members { get; set; }
+        public virtual List<ProjectMember> ProjectMembers { get; set; }
         //public List<TopicsForProject> TopicsForProject { get; set; }
 
         //public Customer Customer { get; set; }

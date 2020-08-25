@@ -14,12 +14,12 @@ namespace WebApi.Entities
         public virtual int AccountId { get; set; }
         public virtual Project Project { get; set; }
         public virtual int ProjectId { get; set; }
+        public virtual Topic Topic { get; set; }
         public WorkItem()
         {
             Created = DateTime.UtcNow;
         }
 
-        //public Topic Topic { get; set; }
         //public int? TopicId { get; set; }
         //public Rate Rate { get; set; }
         //public int? RateId { get; set; }

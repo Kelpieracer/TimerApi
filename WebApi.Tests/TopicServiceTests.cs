@@ -61,7 +61,7 @@ namespace UnitTests
             mockRepository.Setup((repo) => repo.UpdateAsync(It.IsAny<Topic>()))
                 .ReturnsAsync(() => entity);
             mockRepository.Setup((repo) => repo.GetById(entity.TopicId))
-                .ReturnsAsync(() => entity);
+                .Returns(() => entity);
             var mapper = MockMapper.GetNew();
             var service = new TopicService(mockRepository.Object, mapper);
             var request = errorCode != ErrorMessages.Code.BadRequest ? new UpdateTopicRequest { Name = newName, TopicId = 1 } : null;
@@ -99,7 +99,7 @@ namespace UnitTests
             mockRepository.Setup((repo) => repo.DeleteAsync(1, 10))
                 .ReturnsAsync(() => entity);
             mockRepository.Setup((repo) => repo.GetById(entity.TopicId))
-                .ReturnsAsync(() => entity);
+                .Returns(() => entity);
 
             TopicResponse resultValue = null;
             var exception = await Record.ExceptionAsync(async () => { resultValue = await service.Delete(id, accountId); });

@@ -1,6 +1,7 @@
 using AutoMapper;
 using WebApi.Entities;
 using WebApi.Models.Accounts;
+using WebApi.Models.Members;
 using WebApi.Models.Projects;
 using WebApi.Models.Topics;
 using WebApi.Models.WorkItems;
@@ -35,15 +36,22 @@ namespace WebApi.Helpers
                     }
                 ));
 
-            CreateMap<Topic, TopicResponse>();
+            CreateMap<Topic, ProjectMemberResponse>();
             CreateMap<CreateTopicRequest, Topic>();
             CreateMap<UpdateTopicRequest, Topic>();
 
             CreateMap<Project, ProjectResponse>();
             CreateMap<CreateProjectRequest, Project>();
             CreateMap<UpdateProjectRequest, Project>();
+            CreateMap<Project, ProjectMemberResponse>();
+
+            CreateMap<ProjectMember, ProjectMemberResponse>();
+            CreateMap<CreateProjectMemberRequest, ProjectMember>();
+            CreateMap<UpdateProjectMemberRequest, ProjectMember>();
+            CreateMap<ProjectMember, AccountResponse>();
 
             CreateMap<WorkItem, WorkItemResponse>();
+            CreateMap<WorkItem, TopicResponse>();
             CreateMap<CreateWorkItemRequest, WorkItem>();
             CreateMap<UpdateWorkItemRequest, WorkItem>();
         }

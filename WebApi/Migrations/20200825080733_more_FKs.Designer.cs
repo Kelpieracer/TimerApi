@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApi.Helpers;
 
 namespace WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20200825080733_more_FKs")]
+    partial class more_FKs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,6 +129,32 @@ namespace WebApi.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("WebApi.Entities.Member", b =>
+                {
+                    b.Property<int>("MemberId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MemberId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectMembers");
+                });
+
             modelBuilder.Entity("WebApi.Entities.Project", b =>
                 {
                     b.Property<int>("ProjectId")
@@ -154,35 +182,6 @@ namespace WebApi.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("WebApi.Entities.ProjectMember", b =>
-                {
-                    b.Property<int>("ProjectMemberId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("Modified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProjectMemberId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.HasIndex("AccountId", "ProjectId")
-                        .IsUnique();
-
-                    b.ToTable("ProjectMembers");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Rate", b =>
@@ -369,20 +368,18 @@ namespace WebApi.Migrations
                         });
                 });
 
+            modelBuilder.Entity("WebApi.Entities.Member", b =>
+                {
+                    b.HasOne("WebApi.Entities.Project", "Project")
+                        .WithMany("Members")
+                        .HasForeignKey("ProjectId");
+                });
+
             modelBuilder.Entity("WebApi.Entities.Project", b =>
                 {
                     b.HasOne("WebApi.Entities.Customer", null)
                         .WithMany("Projects")
                         .HasForeignKey("CustomerId");
-                });
-
-            modelBuilder.Entity("WebApi.Entities.ProjectMember", b =>
-                {
-                    b.HasOne("WebApi.Entities.Project", null)
-                        .WithMany("Members")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebApi.Entities.Rate", b =>

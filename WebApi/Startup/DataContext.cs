@@ -13,7 +13,7 @@ namespace WebApi.Helpers
         public virtual DbSet<Rate> Rates { get; set; }
         public virtual DbSet<Topic> Topics { get; set; }
         public virtual DbSet<WorkItem> WorkItems { get; set; }
-        public virtual DbSet<Member> ProjectMembers { get; set; }
+        public virtual DbSet<ProjectMember> ProjectMembers { get; set; }
         public virtual DbSet<Account> Accounts { get; set; }
 
         private readonly IConfiguration Configuration;
@@ -55,6 +55,13 @@ namespace WebApi.Helpers
 
             // connect to sql server
             options.UseLazyLoadingProxies().UseSqlServer(dbConnectionString);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ProjectMember>()
+                .HasIndex(p => new { p.AccountId, p.ProjectId })
+                .IsUnique(true);
         }
     }
 }

@@ -43,9 +43,16 @@ namespace WebApi.Services
         public ProjectResponse Read(int id)
         {
             var entity = _repository.GetById(id);
-            //if (entity == null)
-            //    ErrorMessages.Throw(ErrorMessages.Code.NotFound);
-            return _mapper.Map<ProjectResponse>(entity);
+            var response = _mapper.Map<ProjectResponse>(entity);
+            _mapper.Map(entity.WorkItems, response.WorkItems);
+            _mapper.Map(entity.ProjectMembers, response.ProjectMembers);
+            foreach(var projectMember in entity.ProjectMembers)
+            {
+                var i = entity.ProjectMembers.IndexOf(projectMember);
+                response.ProjectMembers[i].ProjectName = entity.Name;
+                //_mapper.Map(entity.ProjectMembers[i].Account, response.ProjectMembers[i].AccountResponse);
+            }
+            return response;
         }
 
         public async Task<ProjectResponse> Update(UpdateProjectRequest model, int accountId)

@@ -9,9 +9,9 @@ namespace WebApi.Entities
         public virtual int ProjectId { get; set; }
         public virtual DateTime Created { get; set; }
         public virtual DateTime? Modified { get; set; }
-
-        [ForeignKey("AccountForeignKey")]
-        public virtual int AccountId { get; set; }
+        //public virtual Account Account { get; set; }
+        ////[ForeignKey("AccountForeignKey")]
+        //public virtual int AccountId { get; set; }
         public ProjectMember()
         {
             Created = DateTime.UtcNow;

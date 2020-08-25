@@ -59,9 +59,9 @@ namespace WebApi.Helpers
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ProjectMember>()
-                .HasIndex(p => new { p.AccountId, p.ProjectId })
-                .IsUnique(true);
+            //modelBuilder.Entity<ProjectMember>()
+            //    .HasIndex(p => new { p.AccountId, p.ProjectId })
+            //    .IsUnique(true);
         }
     }
 }

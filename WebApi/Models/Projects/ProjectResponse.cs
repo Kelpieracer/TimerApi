@@ -11,7 +11,7 @@ namespace WebApi.Models.Projects
         public string Name { get; set; }
         public int? CustomerId { get; set; }
         public List<WorkItemResponse> WorkItems { get; set; }
-        public List<RateResponse> Rates { get; set; }
         public List<ProjectMemberResponse> ProjectMembers { get; set; }
+        public List<RateResponse> Rates { get; set; }
     }
 }

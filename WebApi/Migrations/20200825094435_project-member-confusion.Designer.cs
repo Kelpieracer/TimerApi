@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApi.Helpers;
 
 namespace WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20200825094435_project-member-confusion")]
+    partial class projectmemberconfusion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,6 +165,9 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -175,6 +180,9 @@ namespace WebApi.Migrations
                     b.HasKey("ProjectMemberId");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("AccountId", "ProjectId")
+                        .IsUnique();
 
                     b.ToTable("ProjectMembers");
                 });
@@ -239,6 +247,39 @@ namespace WebApi.Migrations
                     b.HasKey("TopicId");
 
                     b.ToTable("Topics");
+                });
+
+            modelBuilder.Entity("WebApi.Entities.TopicsForProject", b =>
+                {
+                    b.Property<int>("TopicsForProjectId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TopicId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TopicsForProjectId");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("TopicId");
+
+                    b.ToTable("TopicsForProject");
                 });
 
             modelBuilder.Entity("WebApi.Entities.WorkItem", b =>
@@ -351,6 +392,21 @@ namespace WebApi.Migrations
                     b.HasOne("WebApi.Entities.Customer", null)
                         .WithMany("Rates")
                         .HasForeignKey("CustomerId");
+                });
+
+            modelBuilder.Entity("WebApi.Entities.TopicsForProject", b =>
+                {
+                    b.HasOne("WebApi.Entities.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId");
+
+                    b.HasOne("WebApi.Entities.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId");
+
+                    b.HasOne("WebApi.Entities.Topic", "Topic")
+                        .WithMany("TopicsForProjects")
+                        .HasForeignKey("TopicId");
                 });
 
             modelBuilder.Entity("WebApi.Entities.WorkItem", b =>

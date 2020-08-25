@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApi.Helpers;
 
 namespace WebApi.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20200825114221_project-member-to-account")]
+    partial class projectmembertoaccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,6 +165,12 @@ namespace WebApi.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("AccountForeignKey")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -174,7 +182,12 @@ namespace WebApi.Migrations
 
                     b.HasKey("ProjectMemberId");
 
+                    b.HasIndex("AccountForeignKey");
+
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("AccountId", "ProjectId")
+                        .IsUnique();
 
                     b.ToTable("ProjectMembers");
                 });
@@ -339,6 +352,10 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Entities.ProjectMember", b =>
                 {
+                    b.HasOne("WebApi.Entities.Account", "Account")
+                        .WithMany("ProjectMembers")
+                        .HasForeignKey("AccountForeignKey");
+
                     b.HasOne("WebApi.Entities.Project", null)
                         .WithMany("ProjectMembers")
                         .HasForeignKey("ProjectId")

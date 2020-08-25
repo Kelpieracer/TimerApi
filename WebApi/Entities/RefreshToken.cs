@@ -8,16 +8,16 @@ namespace WebApi.Entities
     public class RefreshToken
     {
         [Key]
-        public int Id { get; set; }
-        public Account Account { get; set; }
-        public string Token { get; set; }
-        public DateTime Expires { get; set; }
-        public bool IsExpired => DateTime.UtcNow >= Expires;
-        public DateTime Created { get; set; }
-        public string CreatedByIp { get; set; }
-        public DateTime? Revoked { get; set; }
-        public string RevokedByIp { get; set; }
-        public string ReplacedByToken { get; set; }
-        public bool IsActive => Revoked == null && !IsExpired;
+        public virtual int Id { get; set; }
+        public virtual Account Account { get; set; }
+        public virtual string Token { get; set; }
+        public virtual DateTime Expires { get; set; }
+        public virtual bool IsExpired => DateTime.UtcNow >= Expires;
+        public virtual DateTime Created { get; set; }
+        public virtual string CreatedByIp { get; set; }
+        public virtual DateTime? Revoked { get; set; }
+        public virtual string RevokedByIp { get; set; }
+        public virtual string ReplacedByToken { get; set; }
+        public virtual bool IsActive => Revoked == null && !IsExpired;
     }
 }

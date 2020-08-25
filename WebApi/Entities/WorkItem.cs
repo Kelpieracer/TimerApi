@@ -12,6 +12,8 @@ namespace WebApi.Entities
         public virtual DateTime Created { get; set; }
         public virtual DateTime? Modified { get; set; }
         public virtual int AccountId { get; set; }
+        public virtual Project Project { get; set; }
+        public virtual int ProjectId { get; set; }
         public WorkItem()
         {
             Created = DateTime.UtcNow;
@@ -22,7 +24,5 @@ namespace WebApi.Entities
         //public Rate Rate { get; set; }
         //public int? RateId { get; set; }
 
-        public Project Project { get; set; }
-        public int ProjectId { get; set; }
     }
 }

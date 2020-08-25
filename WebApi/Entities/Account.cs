@@ -5,23 +5,23 @@ namespace WebApi.Entities
 {
     public class Account
     {
-        public int AccountId { get; set; }
-        public string Title { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
-        public bool AcceptTerms { get; set; }
-        public Role Role { get; set; }
-        public string VerificationToken { get; set; }
-        public DateTime? Verified { get; set; }
-        public bool IsVerified => Verified.HasValue || PasswordReset.HasValue;
-        public string ResetToken { get; set; }
-        public DateTime? ResetTokenExpires { get; set; }
-        public DateTime? PasswordReset { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime? Modified { get; set; }
-        public List<RefreshToken> RefreshTokens { get; set; }
+        public virtual int AccountId { get; set; }
+        public virtual string Title { get; set; }
+        public virtual string FirstName { get; set; }
+        public virtual string LastName { get; set; }
+        public virtual string Email { get; set; }
+        public virtual string PasswordHash { get; set; }
+        public virtual bool AcceptTerms { get; set; }
+        public virtual Role Role { get; set; }
+        public virtual string VerificationToken { get; set; }
+        public virtual DateTime? Verified { get; set; }
+        public virtual bool IsVerified => Verified.HasValue || PasswordReset.HasValue;
+        public virtual string ResetToken { get; set; }
+        public virtual DateTime? ResetTokenExpires { get; set; }
+        public virtual DateTime? PasswordReset { get; set; }
+        public virtual DateTime Created { get; set; }
+        public virtual DateTime? Modified { get; set; }
+        public virtual List<RefreshToken> RefreshTokens { get; set; }
 
         //public List<Bill> Bills { get; set; }
         //public List<Customer> Customers { get; set; }

@@ -54,7 +54,7 @@ namespace WebApi.Helpers
             }
 
             // connect to sql server
-            options.UseSqlServer(dbConnectionString);
+            options.UseLazyLoadingProxies().UseSqlServer(dbConnectionString);
         }
     }
 }

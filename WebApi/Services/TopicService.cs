@@ -42,7 +42,7 @@ namespace WebApi.Services
 
         public TopicResponse Read(int id)
         {
-            var entity = _repository.GetById(id);
+            var entity = _repository.FetchById(id);
             if (entity == null)
                 ErrorMessages.Throw(ErrorMessages.Code.NotFound);
             return _mapper.Map<TopicResponse>(entity);
@@ -67,7 +67,7 @@ namespace WebApi.Services
 
         public Topic AuthorizedEntity(int id, int accountId)
         {
-            var entityToUpdate = _repository.GetById(id);
+            var entityToUpdate = _repository.FetchById(id);
             if(entityToUpdate == null)
                 ErrorMessages.Throw(ErrorMessages.Code.BadRequest);
 

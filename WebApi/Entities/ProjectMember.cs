@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApi.Entities
 {
@@ -9,9 +8,8 @@ namespace WebApi.Entities
         public virtual int ProjectId { get; set; }
         public virtual DateTime Created { get; set; }
         public virtual DateTime? Modified { get; set; }
-        //public virtual Account Account { get; set; }
-        ////[ForeignKey("AccountForeignKey")]
-        //public virtual int AccountId { get; set; }
+        public virtual int AccountId { get; set; }
+        public virtual Account Account { get; set; }
         public ProjectMember()
         {
             Created = DateTime.UtcNow;

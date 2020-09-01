@@ -60,7 +60,7 @@ namespace UnitTests
             var mockRepository = new Mock<ITopicRepository>();
             mockRepository.Setup((repo) => repo.UpdateAsync(It.IsAny<Topic>()))
                 .ReturnsAsync(() => entity);
-            mockRepository.Setup((repo) => repo.GetById(entity.TopicId))
+            mockRepository.Setup((repo) => repo.FetchById(entity.TopicId))
                 .Returns(() => entity);
             var mapper = MockMapper.GetNew();
             var service = new TopicService(mockRepository.Object, mapper);
@@ -98,7 +98,7 @@ namespace UnitTests
             (var entity, var mockRepository, var mapper, var service) = GetSetup();
             mockRepository.Setup((repo) => repo.DeleteAsync(1, 10))
                 .ReturnsAsync(() => entity);
-            mockRepository.Setup((repo) => repo.GetById(entity.TopicId))
+            mockRepository.Setup((repo) => repo.FetchById(entity.TopicId))
                 .Returns(() => entity);
 
             TopicResponse resultValue = null;

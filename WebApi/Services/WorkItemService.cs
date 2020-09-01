@@ -42,7 +42,7 @@ namespace WebApi.Services
             var response = await _repository.AddAsync(entity);
             if (model.ProjectId != null)
             {
-                var project =  _projectRepository.GetById((int) model.ProjectId);
+                var project =  _projectRepository.FetchById((int) model.ProjectId);
                 project.WorkItems.Add(response);
             }
             return _mapper.Map<WorkItemResponse>(response);
@@ -50,7 +50,7 @@ namespace WebApi.Services
 
         public  WorkItemResponse Read(int id)
         {
-            var entity = _repository.GetById(id);
+            var entity = _repository.FetchById(id);
             if (entity == null)
                 ErrorMessages.Throw(ErrorMessages.Code.NotFound);
             return _mapper.Map<WorkItemResponse>(entity);
@@ -75,7 +75,7 @@ namespace WebApi.Services
 
         public WorkItem AuthorizedEntity(int id, int accountId)
         {
-            var entityToUpdate =  _repository.GetById(id);
+            var entityToUpdate =  _repository.FetchById(id);
             if(entityToUpdate == null)
                 ErrorMessages.Throw(ErrorMessages.Code.BadRequest);
 

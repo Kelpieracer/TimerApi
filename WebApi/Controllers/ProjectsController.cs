@@ -18,29 +18,30 @@ namespace WebApi.Controllers
             _mapper = mapper;
         }
 
-        //[Authorize]
-        [HttpGet("{id}")]
-        public  ActionResult<ProjectResponse> Read(int id)
+        [Authorize]
+        [HttpPost("fetch")]
+        public  async Task<ActionResult<ProjectResponse>> Fetch(ReadProjectRequest model)
         {
-            return Ok( _projectService.Read(id));
+            var response = await _projectService.Fetch(model, Account);
+            return Ok(response);
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<ProjectResponse>> Create(CreateProjectRequest model)
         {
             return Ok(await _projectService.Create(model, Account));
         }
 
         [Authorize]
-        [HttpPut]
+        [HttpPut("update")]
         public async Task<ActionResult<ProjectResponse>> Update(UpdateProjectRequest model)
         {
             return Ok(await _projectService.Update(model, Account.AccountId));
         }
 
         [Authorize]
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult<ProjectResponse>> Delete(int id)
         {
             return Ok(await _projectService.Delete(id, Account.AccountId));

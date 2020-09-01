@@ -15,13 +15,9 @@ namespace WebApi.Helpers
         public AutoMapperProfile()
         {
             CreateMap<Account, AccountResponse>();
-
             CreateMap<Account, AuthenticateResponse>();
-
             CreateMap<RegisterRequest, Account>();
-
             CreateMap<CreateRequest, Account>();
-
             CreateMap<UpdateRequest, Account>()
                 .ForAllMembers(x => x.Condition(
                     (src, dest, prop) =>
@@ -36,6 +32,7 @@ namespace WebApi.Helpers
                         return true;
                     }
                 ));
+            CreateMap<Account, ShortAccountResponse>();
 
             CreateMap<Topic, TopicResponse>();
             CreateMap<CreateTopicRequest, Topic>();
@@ -48,7 +45,7 @@ namespace WebApi.Helpers
             CreateMap<ProjectMember, ProjectMemberResponse>();
             CreateMap<CreateProjectMemberRequest, ProjectMember>();
             CreateMap<UpdateProjectMemberRequest, ProjectMember>();
-            //CreateMap<ProjectMember, AccountResponse>();
+            
 
             CreateMap<WorkItem, WorkItemResponse>();
             CreateMap<CreateWorkItemRequest, WorkItem>();

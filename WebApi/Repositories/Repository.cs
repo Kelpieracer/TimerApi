@@ -11,8 +11,8 @@ namespace WebApi.Repositories
 {
     public interface IRepository<TEntity> where TEntity : class, new()
     {
-        public Task<IList<TEntity>> GetAsync(Expression<Func<TEntity, bool>> expression);
-        public TEntity GetById(int id);
+        public Task<IList<TEntity>> FetchAsync(Expression<Func<TEntity, bool>> expression);
+        public TEntity FetchById(int id);
         public Task<TEntity> AddAsync(TEntity entity);
         public Task<TEntity> UpdateAsync(TEntity entity);
         public Task<TEntity> DeleteAsync(int id, int accountId);
@@ -27,12 +27,12 @@ namespace WebApi.Repositories
             _context = context;
         }
 
-        public async Task<IList<TEntity>> GetAsync(Expression<Func<TEntity, bool>> expression)
+        public async Task<IList<TEntity>> FetchAsync(Expression<Func<TEntity, bool>> expression)
         {
             return await _context.Set<TEntity>().Where(expression).ToListAsync();
         }
 
-        public TEntity GetById(int id)
+        public TEntity FetchById(int id)
         {
             try
             {
